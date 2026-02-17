@@ -10,8 +10,4 @@
     <ProjectReference Include="..\shopix_core_domain\shopix_core_domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Concrete\Repository\" />
-  </ItemGroup>
-
 </Project>
