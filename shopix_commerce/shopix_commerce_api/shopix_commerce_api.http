@@ -1,0 +1,6 @@
+@shopix_commerce_api_HostAddress = http://localhost:5242
+
+GET {{shopix_commerce_api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
