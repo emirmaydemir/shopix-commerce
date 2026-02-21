@@ -5,8 +5,10 @@ namespace shopix_core_domain.Entities
     public class OrderItem : BaseEntity
     {
         public string ProductName { get; set; } = string.Empty;
+        [Column(TypeName = "decimal(18,6)")]
         public decimal Price { get; set; }
         public int Quantity { get; set; }
+        [Column(TypeName = "decimal(18,6)")]
         public decimal SubTotal => Price * Quantity;
 
         [ForeignKey(nameof(Order))]

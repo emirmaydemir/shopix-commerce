@@ -15,12 +15,13 @@ namespace shopix_core_domain.Entities
         public string? ShippingZipCode { get; set; }
 
         //Payment Info
+        [Column(TypeName = "decimal(18,6)")]
         public decimal TotalAmount { get; set; }
         public string PaymentId { get; set; } = string.Empty;
         public string OrderStatus { get; set; } = "Processing";
         public string PaymentStatus { get; set; } = "Pending";
         [ForeignKey(nameof(User))]
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         public virtual ApplicationUser User { get; set; } = null!;
         public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
