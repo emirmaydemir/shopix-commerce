@@ -49,7 +49,11 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    var adminEmail = "admin@ecommerce.com";
+    var adminEmail = builder.Configuration["AdminSettings:Email"]!;
+    var adminPassword = builder.Configuration["AdminSettings:Password"]!;
+    var adminFirstName = builder.Configuration["AdminSettings:FirstName"]!;
+    var adminLastName = builder.Configuration["AdminSettings:LastName"]!;
+
     var adminUser = await userManager.FindByEmailAsync(adminEmail);
     if (adminUser == null)
     {
@@ -57,10 +61,10 @@ using (var scope = app.Services.CreateScope())
         {
             UserName = adminEmail,
             Email = adminEmail,
-            FirstName = "Admin",
-            LastName = "User"
+            FirstName = adminFirstName,
+            LastName = adminLastName
         };
-        var createAdminResult = await userManager.CreateAsync(newAdminUser, "Admin123!");
+        var createAdminResult = await userManager.CreateAsync(newAdminUser, adminPassword);
         if (createAdminResult.Succeeded)
         {
             await userManager.AddToRoleAsync(newAdminUser, "Admin");
