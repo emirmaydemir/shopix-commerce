@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using shopix_core_domain.Data;
 using shopix_core_domain.Entities;
 using shopix_core_domain.Interfaces.Repository;
@@ -34,11 +35,28 @@ namespace shopix_commerce_infrastructure.Concrete.Repository
             return await query.ToListAsync();
         }
 
+        public async Task<IEnumerable<T>> GetAllAsyncWithInclude(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IIncludableQueryable<T, object>> include, bool asNoTracking = true)
+        {
+            IQueryable<T> query = _dbSet;
+            query = asNoTracking ? query.AsNoTracking() : query;
+            query = predicate != null ? query.Where(predicate) : query;
+            query = include != null ? include(query) : query;
+            return await query.ToListAsync();
+        }
+
         public async Task<T?> GetByIdAsync(Guid Id, bool asNoTracking = true)
         {
             var query = _dbSet.AsQueryable();
             query = asNoTracking ? query.AsNoTracking() : query;
             return await query.FirstOrDefaultAsync(x => x.Id == Id);
+        }
+
+        public Task<T?> GetByIdAsyncExpressionWithInclude(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IIncludableQueryable<T, object>> includeExpression, bool asNoTracking = true)
+        {
+            var query = _dbSet.Where(predicate);
+            query = asNoTracking ? query.AsNoTracking() : query;
+            query = includeExpression(query);
+            return query.FirstOrDefaultAsync();
         }
 
         public async Task SoftDeleteAsync(Guid Id)

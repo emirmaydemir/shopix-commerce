@@ -12,8 +12,8 @@ using shopix_core_domain.Data;
 namespace shopix_core_domain.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260225122355_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260228183605_initialcreate")]
+    partial class initialcreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -468,6 +468,10 @@ namespace shopix_core_domain.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -479,10 +483,6 @@ namespace shopix_core_domain.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
