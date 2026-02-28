@@ -69,7 +69,7 @@ namespace shopix_commerce_infrastructure.Concrete.Repository
             }
         }
 
-        public void Update(T entity)
+        public async Task UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
         }

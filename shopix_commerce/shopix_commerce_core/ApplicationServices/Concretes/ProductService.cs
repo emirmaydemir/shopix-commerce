@@ -57,13 +57,13 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
             }
 
             var fileName = $"{Guid.NewGuid()}{extension}";
-            var imagePath = Path.Combine("wwwroot", "images", fileName);
-            if (!Directory.Exists(imagePath))
+            var imagesFolder = Path.Combine("wwwroot", "images");
+            if (!Directory.Exists(imagesFolder))
             {
-                Directory.CreateDirectory(imagePath);
+                Directory.CreateDirectory(imagesFolder);
             }
 
-            var filePath = Path.Combine(imagePath, fileName);
+            var filePath = Path.Combine(imagesFolder, fileName);
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await addImageDTO.Image.CopyToAsync(stream);
@@ -75,7 +75,7 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
                 if (currentMainImage != null)
                 {
                     currentMainImage.IsMain = false;
-                    await _unitOfWork.ProductImages.Update(currentMainImage);
+                    await _unitOfWork.ProductImages.UpdateAsync(currentMainImage);
                     await _unitOfWork.SaveAsync();
 
                 }
@@ -85,7 +85,7 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
             var productImage = new ProductImage
             {
                 ProductId = Id,
-                ImageUrl = $"/images/{fileName}/{fileName}",
+                ImageUrl = $"/images/{fileName}",
                 IsMain = addImageDTO.IsMain
             };
 
@@ -232,7 +232,7 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
                 };
             }
             _mapper.Map(updateProductDTO, product);
-            await _unitOfWork.Products.Update(product);
+            await _unitOfWork.Products.UpdateAsync(product);
             await _unitOfWork.SaveAsync();
             var productDTO = _mapper.Map<ProductDTO>(product);
             return new ResponseModel<ProductDTO>

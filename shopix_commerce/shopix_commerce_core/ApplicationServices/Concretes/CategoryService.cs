@@ -98,7 +98,7 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
                 };
             }
             _mapper.Map(categoryDTO, category);
-            await _unitOfWork.Categories.Update(category);
+            await _unitOfWork.Categories.UpdateAsync(category);
             await _unitOfWork.SaveAsync();
             var updatedCategoryDTO = _mapper.Map<CategoryDTO>(category);
             return new ResponseModel<CategoryDTO>

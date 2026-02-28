@@ -12,7 +12,7 @@ namespace shopix_core_domain.Interfaces.Repository
         Task<IEnumerable<T>> GetAllAsyncWithInclude(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IIncludableQueryable<T,object>> include, bool asNoTracking = true);
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, bool asNoTracking = true);
         Task AddAsync(T entity);
-        Task Update(T entity);
+        Task UpdateAsync(T entity);
         Task SoftDeleteAsync(Guid id);
     }
 }
