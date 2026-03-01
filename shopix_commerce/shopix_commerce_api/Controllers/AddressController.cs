@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using shopix_commerce_core.ApplicationServices.Interfaces;
 using shopix_commerce_core.DTO.Address;
@@ -12,6 +12,7 @@ namespace shopix_commerce_api.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AddressController : ControllerBase
     {
         private readonly IAddressService _addressService;

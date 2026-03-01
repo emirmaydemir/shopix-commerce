@@ -34,7 +34,9 @@ namespace shopix_commerce_infrastructure.Extensions.TokenExtensions
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(7),
+                Expires = DateTime.UtcNow.AddDays(7),
+                IssuedAt = DateTime.UtcNow,
+                NotBefore = DateTime.UtcNow,
                 SigningCredentials = creds,
                 Issuer = _configuration["JwtSettings:Issuer"],
                 Audience = _configuration["JwtSettings:Audience"]

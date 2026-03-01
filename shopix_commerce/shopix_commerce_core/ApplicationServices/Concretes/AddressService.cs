@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using shopix_commerce_core.ApplicationServices.Interfaces;
 using shopix_commerce_core.DTO.Address;
+using shopix_commerce_infrastructure.CurrentUser;
 using shopix_commerce_infrastructure.Models;
 using shopix_commerce_infrastructure.UoW;
 using shopix_core_domain.Entities;
@@ -13,18 +14,18 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly string? _userId;
-        public AddressService(IMapper mapper, IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
+        private readonly IUserContext _userContext;
+        public AddressService(IMapper mapper, IUnitOfWork unitOfWork, IUserContext userContext)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
-            _userId = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _userContext = userContext;
         }
         public async Task<ResponseModel<AddressDTO>> CreateAddressAsync(CreateAddressDTO createAddressDTO)
         {
             if (createAddressDTO.IsDefault)
             {
-                var existingDefault = await _unitOfWork.Addresses.FindAsync(x => x.UserId == _userId && x.IsDefault);
+                var existingDefault = await _unitOfWork.Addresses.FindAsync(x => x.UserId == _userContext.UserId && x.IsDefault);
                 foreach (var adrs in existingDefault)
                 {
                     adrs.IsDefault = false;
@@ -32,7 +33,7 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
             }
 
             var address = _mapper.Map<Address>(createAddressDTO);
-            address.UserId = _userId;
+            address.UserId = _userContext.UserId;
             await _unitOfWork.Addresses.AddAsync(address);
             await _unitOfWork.SaveAsync();
             var addressDTO = _mapper.Map<AddressDTO>(address);
@@ -46,7 +47,7 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
 
         public async Task<ResponseModel<bool>> DeleteAddressAsync(Guid id)
         {
-            var address = await _unitOfWork.Addresses.FindAsync(x => x.Id == id || x.UserId == _userId);
+            var address = await _unitOfWork.Addresses.FindAsync(x => x.Id == id || x.UserId == _userContext.UserId);
             if (address is null)
             {
                 return new ResponseModel<bool>
@@ -69,7 +70,7 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
 
         public async Task<ResponseModel<AddressDTO>> GetAddressByIdAsync(Guid id)
         {
-            var addresses = _unitOfWork.Addresses.FindAsync(x => x.Id == id && x.UserId == _userId);
+            var addresses = _unitOfWork.Addresses.FindAsync(x => x.Id == id && x.UserId == _userContext.UserId);
             if (addresses is null)
             {
                 return new ResponseModel<AddressDTO>
@@ -91,7 +92,7 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
 
         public async Task<ResponseModel<List<AddressDTO>>> GetAllAddressesAsync()
         {
-            var addreses = _unitOfWork.Addresses.FindAsync(x => x.UserId == _userId).Result
+            var addreses = _unitOfWork.Addresses.FindAsync(x => x.UserId == _userContext.UserId).Result
                 .OrderByDescending(x => x.IsDefault).ThenByDescending(x => x.CreatedAt).ToList();
 
             var addressDTOs = _mapper.Map<List<AddressDTO>>(addreses);
@@ -105,7 +106,7 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
 
         public async Task<ResponseModel<bool>> UpdateAddressAsync(Guid id, UpdateAddressDTO updateAddressDTO)
         {
-            var address = _unitOfWork.Addresses.FindAsync(x => x.Id == id && x.UserId == _userId).Result;
+            var address = _unitOfWork.Addresses.FindAsync(x => x.Id == id && x.UserId == _userContext.UserId).Result;
             if (address is null)
             {
                 return new ResponseModel<bool>
@@ -117,7 +118,7 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
             }
             if (updateAddressDTO.IsDefault)
             {
-                var existingDefault = _unitOfWork.Addresses.FindAsync(x => x.UserId == _userId && x.IsDefault).Result;
+                var existingDefault = _unitOfWork.Addresses.FindAsync(x => x.UserId == _userContext.UserId && x.IsDefault).Result;
                 foreach (var adrs in existingDefault)
                 {
                     adrs.IsDefault = false;
