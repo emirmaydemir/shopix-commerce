@@ -10,9 +10,9 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
 {
     public class ProductService : IProductService
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public ProductService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly IUnitOfWork _unitOfWork;
+        public ProductService(IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
@@ -174,9 +174,9 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
             if (categoryId.ToString().StartsWith("000"))
             {
                 var products = await _unitOfWork.Products.GetAllAsyncWithInclude(
-                 null,
-                 include: p => p.Include(pr => pr.ProductImages).Include(x => x.Category)
-             );
+                    null,
+                    include: p => p.Include(pr => pr.ProductImages).Include(x => x.Category)
+                );
                 var productsDTO = _mapper.Map<IEnumerable<ProductDTO>>(products);
                 var response = new ResponseModel<IEnumerable<ProductDTO>>
                 {
@@ -189,9 +189,9 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
             else
             {
                 var products = await _unitOfWork.Products.GetAllAsyncWithInclude(
-               predicate: p => p.CategoryId == categoryId,
-               include: p => p.Include(pr => pr.ProductImages)
-           );
+                    predicate: p => p.CategoryId == categoryId,
+                    include: p => p.Include(pr => pr.ProductImages)
+                );
                 var productsDTO = _mapper.Map<IEnumerable<ProductDTO>>(products);
                 var response = new ResponseModel<IEnumerable<ProductDTO>>
                 {

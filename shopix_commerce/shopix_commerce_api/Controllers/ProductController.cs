@@ -53,7 +53,7 @@ namespace shopix_commerce_api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] UpdateProductDTO dto)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid) //DTO’ya validation eklersek işe yarayacak şu an için anlamsız
                 return BadRequest(ModelState);
 
             var result = await _productService.UpdateProduct(id, dto);

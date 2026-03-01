@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using shopix_commerce_core.DTO.Address;
 using shopix_commerce_core.DTO.Category;
 using shopix_commerce_core.DTO.Product;
 using shopix_core_domain.Entities;
@@ -27,6 +28,12 @@ namespace shopix_commerce_core.Mapping
             #region ProductImage
             CreateMap<ProductImage, ProductImageDTO>().ReverseMap();
             CreateMap<ProductImage, AddProductImageDTO>().ReverseMap();
+            #endregion
+
+            #region Address
+            CreateMap<Address, AddressDTO>().ReverseMap();
+            CreateMap<Address, CreateAddressDTO>().ReverseMap();
+            CreateMap<Address, UpdateAddressDTO>().ReverseMap();
             #endregion
         }
     }
