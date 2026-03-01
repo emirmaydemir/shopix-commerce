@@ -70,8 +70,8 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
 
         public async Task<ResponseModel<AddressDTO>> GetAddressByIdAsync(Guid id)
         {
-            var addresses = _unitOfWork.Addresses.FindAsync(x => x.Id == id && x.UserId == _userContext.UserId);
-            if (addresses is null)
+            var addresses = await _unitOfWork.Addresses.FindAsync(x => x.Id == id && x.UserId == _userContext.UserId);
+            if (addresses is null || !addresses.Any())
             {
                 return new ResponseModel<AddressDTO>
                 {
@@ -81,7 +81,9 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
                 };
             }
 
-            var addressDTO = _mapper.Map<AddressDTO>(addresses);
+            var address = addresses.FirstOrDefault()!;
+            var addressDTO = _mapper.Map<AddressDTO>(address);
+
             return new ResponseModel<AddressDTO>
             {
                 Data = addressDTO,
@@ -92,10 +94,14 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
 
         public async Task<ResponseModel<List<AddressDTO>>> GetAllAddressesAsync()
         {
-            var addreses = _unitOfWork.Addresses.FindAsync(x => x.UserId == _userContext.UserId).Result
-                .OrderByDescending(x => x.IsDefault).ThenByDescending(x => x.CreatedAt).ToList();
+            var addresses = await _unitOfWork.Addresses.FindAsync(x => x.UserId == _userContext.UserId);
+            var orderedAddresses = addresses
+                .OrderByDescending(x => x.IsDefault)
+                .ThenByDescending(x => x.CreatedAt)
+                .ToList();
 
-            var addressDTOs = _mapper.Map<List<AddressDTO>>(addreses);
+            var addressDTOs = _mapper.Map<List<AddressDTO>>(orderedAddresses);
+
             return new ResponseModel<List<AddressDTO>>
             {
                 Data = addressDTOs,
@@ -106,8 +112,8 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
 
         public async Task<ResponseModel<bool>> UpdateAddressAsync(Guid id, UpdateAddressDTO updateAddressDTO)
         {
-            var address = _unitOfWork.Addresses.FindAsync(x => x.Id == id && x.UserId == _userContext.UserId).Result;
-            if (address is null)
+            var addresses = await _unitOfWork.Addresses.FindAsync(x => x.Id == id && x.UserId == _userContext.UserId);
+            if (addresses is null || !addresses.Any())
             {
                 return new ResponseModel<bool>
                 {
@@ -116,18 +122,25 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
                     Message = "Address not found."
                 };
             }
+
+            var address = addresses.FirstOrDefault()!;
             if (updateAddressDTO.IsDefault)
             {
-                var existingDefault = _unitOfWork.Addresses.FindAsync(x => x.UserId == _userContext.UserId && x.IsDefault).Result;
-                foreach (var adrs in existingDefault)
+                var existingDefaults = await _unitOfWork.Addresses.FindAsync(
+                    x => x.UserId == _userContext.UserId && x.IsDefault && x.Id != id);
+
+                foreach (var existingDefault in existingDefaults)
                 {
-                    adrs.IsDefault = false;
+                    existingDefault.IsDefault = false;
+                    await _unitOfWork.Addresses.UpdateAsync(existingDefault);
                 }
             }
+
             _mapper.Map(updateAddressDTO, address);
-            var newAddress = address.FirstOrDefault();
-            await _unitOfWork.Addresses.UpdateAsync(newAddress);
-            _unitOfWork.SaveAsync().Wait();
+
+            await _unitOfWork.Addresses.UpdateAsync(address);
+            await _unitOfWork.SaveAsync();
+
             return new ResponseModel<bool>
             {
                 IsSuccess = true,
