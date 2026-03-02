@@ -14,6 +14,7 @@ using shopix_commerce_infrastructure.UoW;
 using shopix_core_domain.Data;
 using shopix_core_domain.Entities;
 using shopix_core_domain.Interfaces.Repository;
+using StackExchange.Redis;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,11 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var configuration = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("RedisConnection")!, true);
+    return ConnectionMultiplexer.Connect(configuration);
+});
 
 // Infrastructure Services
 builder.Services.AddHttpContextAccessor();
@@ -38,8 +44,10 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
+builder.Services.AddScoped<IBasketService, BasketService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IInMemoryRepository, InMemoryRepository>();
 
 // Response Model
 builder.Services.AddScoped(typeof(ResponseModel<>));

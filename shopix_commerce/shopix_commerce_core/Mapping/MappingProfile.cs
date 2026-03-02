@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using shopix_commerce_core.DTO.Address;
+using shopix_commerce_core.DTO.Basket;
 using shopix_commerce_core.DTO.Category;
 using shopix_commerce_core.DTO.Product;
 using shopix_core_domain.Entities;
@@ -34,6 +35,11 @@ namespace shopix_commerce_core.Mapping
             CreateMap<Address, AddressDTO>().ReverseMap();
             CreateMap<Address, CreateAddressDTO>().ReverseMap();
             CreateMap<Address, UpdateAddressDTO>().ReverseMap();
+            #endregion
+
+            #region Basket
+            CreateMap<Basket, BasketDTO>().ReverseMap();
+            CreateMap<BasketItem, BasketItemDTO>().ReverseMap();
             #endregion
         }
     }
