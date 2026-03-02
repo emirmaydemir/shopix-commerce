@@ -2,6 +2,7 @@
 using shopix_commerce_core.DTO.Address;
 using shopix_commerce_core.DTO.Basket;
 using shopix_commerce_core.DTO.Category;
+using shopix_commerce_core.DTO.Order;
 using shopix_commerce_core.DTO.Product;
 using shopix_core_domain.Entities;
 
@@ -40,6 +41,11 @@ namespace shopix_commerce_core.Mapping
             #region Basket
             CreateMap<Basket, BasketDTO>().ReverseMap();
             CreateMap<BasketItem, BasketItemDTO>().ReverseMap();
+            #endregion
+
+            #region Order
+            CreateMap<Order?, OrderDTO>().ReverseMap();
+            CreateMap<OrderItem, OrderItemDTO>().ReverseMap();
             #endregion
         }
     }

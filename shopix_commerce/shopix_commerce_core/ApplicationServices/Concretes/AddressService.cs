@@ -95,12 +95,12 @@ namespace shopix_commerce_core.ApplicationServices.Concretes
         public async Task<ResponseModel<List<AddressDTO>>> GetAllAddressesAsync()
         {
             var addresses = await _unitOfWork.Addresses.FindAsync(x => x.UserId == _userContext.UserId);
-            var orderedAddresses = addresses
+            var userAddresses = addresses
                 .OrderByDescending(x => x.IsDefault)
                 .ThenByDescending(x => x.CreatedAt)
                 .ToList();
 
-            var addressDTOs = _mapper.Map<List<AddressDTO>>(orderedAddresses);
+            var addressDTOs = _mapper.Map<List<AddressDTO>>(userAddresses);
 
             return new ResponseModel<List<AddressDTO>>
             {

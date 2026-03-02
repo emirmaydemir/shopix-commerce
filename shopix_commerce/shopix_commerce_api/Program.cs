@@ -10,6 +10,7 @@ using shopix_commerce_infrastructure.Concrete.Repository;
 using shopix_commerce_infrastructure.CurrentUser;
 using shopix_commerce_infrastructure.Extensions.TokenExtensions;
 using shopix_commerce_infrastructure.Models;
+using shopix_commerce_infrastructure.PaymentService;
 using shopix_commerce_infrastructure.UoW;
 using shopix_core_domain.Data;
 using shopix_core_domain.Entities;
@@ -45,9 +46,11 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IBasketService, BasketService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IInMemoryRepository, InMemoryRepository>();
+builder.Services.AddScoped<IPaymentService, IyzicoPaymentService>();
 
 // Response Model
 builder.Services.AddScoped(typeof(ResponseModel<>));

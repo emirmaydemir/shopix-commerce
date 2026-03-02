@@ -1,6 +1,7 @@
 ﻿using StackExchange.Redis;
 using shopix_core_domain.Entities;
 using shopix_core_domain.Interfaces.Repository;
+using System.Text.Json;
 
 namespace shopix_commerce_infrastructure.Concrete.Repository
 {
@@ -24,12 +25,12 @@ namespace shopix_commerce_infrastructure.Concrete.Repository
             {
                 return null;
             }
-            return System.Text.Json.JsonSerializer.Deserialize<Basket>(data);
+            return JsonSerializer.Deserialize<Basket>(data);
         }
 
         public async Task<Basket?> UpdateBasketAsync(Basket basket)
         {
-            var created = await _database.StringSetAsync(basket.Id, System.Text.Json.JsonSerializer.Serialize(basket), TimeSpan.FromDays(30));
+            var created = await _database.StringSetAsync(basket.Id, JsonSerializer.Serialize(basket), TimeSpan.FromDays(30));
             if (!created)
             {
                 return null;
